@@ -1,53 +1,71 @@
 // Copyright 2022 UNN-IASR
-#include <time.h>
-#include <locale>
-#include <random>
-#include <ctime>
-#include <fstream>
-#include <iostream>
 #include "textgen.h"
-#define rand_r rand
 
-Gen::Gen(string file) {
-  ifstream fin;
-  fin.open(file);
-  vector<string> words;
-  string word;
-  while (!fin.eof()) {
-    fin >> word;
-    words.push_back(word);
-  }
-  fin.close();
-  for (int i = 0; i < words.size() - NPREF + 1; i++) {
-    prefix prfx;
-    for (int j = 0; j < NPREF; j++)
-      prfx.push_back(words.at(i + j));
-    if (i == words.size() - NPREF)
-      statetab[prfx].push_back("<LP>");
-    else
-      statetab[prfx].push_back(words.at(i + NPREF));
-  }
+MarkovGenerator::MarkovGenerator(std::string path, int preflen) {
+    prefixSize = preflen;
+    std::ifstream file(path);
+    std::string s;
+    for (file >> s; !file.eof(); file >> s) {
+        words.push_back(s);
+    }
+
+    for (int i = 0; i < words.size() - prefixSize + 1; i++) {
+        prefix aFewWords;
+        std::vector<std::string> suffixes;
+
+        for (int j = 0; j < prefixSize; j++) {
+            aFewWords.push_back(words[i + j]);
+        }
+
+        for (int j = 0; j < words.size() - prefixSize; j++) {
+            bool toSave = true;
+            for (int k = 0; k < prefixSize; k++) {
+                if (words[i + k] != words[j + k])
+                    toSave = false;
+        }
+        if (toSave)
+            suffixes.push_back(words[j + prefixSize]);
+        }
+
+    statetab.insert(make_pair(aFewWords, suffixes));
+    }
 }
 
-string Gen::generate() {
-  srand(time(0));
-  string output;
-  deque<string> words;
-  auto it = statetab.begin();
-  advance(it, rand() % statetab.size());
-  for (int i = 0; i < NPREF; i++)
-    words.push_back(it->first.at(i));
-  for (int i = 0; i < MAXGEN; i++) {
-    prefix prfx;
-    for (int i = 0; i < NPREF; i++)
-      prfx.push_back(words.at(i));
-    int random = rand_r() % statetab.find(prfx)->second.size();
-    if (statetab.find(prfx)->second.at(random) == "<LP>") {
-      break;
+std::string MarkovGenerator::getText(int wordsamount) {
+    prefix currentPrefixes;
+    for (int i = 0; i < prefixSize; i++) {
+        currentPrefixes.push_back(words[i]);
     }
-    words.push_back(statetab.find(prfx)->second.at(random));
-    output += words.at(0) + ' ';
-    words.pop_front();
-  }
-  return output;
+    srand(time(NULL));
+
+    std::string result = currentPrefixes[0] + " " + currentPrefixes[1] + " ";
+
+    for (int i = prefixSize; i < wordsamount - prefixSize; i++) {
+        std::vector <std::string> currentSuffix = statetab.at(currentPrefixes);
+
+        if (currentSuffix.size() == 0)
+            break;
+
+        int index = rand_r() % currentSuffix.size();
+        result += currentSuffix[index] + " ";
+        currentPrefixes.erase(currentPrefixes.begin());
+        currentPrefixes.push_back(currentSuffix[index]);
+    }
+
+    return result;
+}
+
+int MarkovGenerator::getPrefixSize() {
+    return prefixSize;
+}
+
+std::string MarkovGenerator::getSuffix(std::deque<std::string> prefdeq) {
+    prefix prefixes;
+    for (int i = 0; i < prefdeq.size(); i++)
+        prefixes.push_back(prefdeq[i]);
+
+    srand(time(NULL));
+    std::vector <std::string> suffix = statetab.at(prefixes);
+    int index = rand_r() % suffix.size();
+    return suffix[index];
 }
