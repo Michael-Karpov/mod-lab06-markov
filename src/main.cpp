@@ -1,7 +1,7 @@
 // Copyright 2022 UNN-IASR
 #include "textgen.h"
-#include <fstream>
 #include <iostream>
+#include <fstream>
 
 int main() {
   Gen g("in.txt");
