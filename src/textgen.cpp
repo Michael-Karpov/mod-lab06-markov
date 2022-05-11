@@ -1,11 +1,12 @@
 // Copyright 2022 UNN-IASR
 #include <time.h>
 #include "textgen.h"
-#include <iostream>
-#include <fstream>
 #include <locale>
 #include <random>
 #include <ctime>
+#include <iostream>
+#include <fstream>
+#define rand_r rand
 
 Gen::Gen(string file) {
   ifstream fin;
@@ -15,7 +16,7 @@ Gen::Gen(string file) {
   while (!fin.eof()) {
     fin >> word;
     words.push_back(word);
- }
+  }
   fin.close();
   for (int i = 0; i < words.size() - NPREF + 1; i++) {
     prefix prfx;
@@ -40,7 +41,7 @@ string Gen::generate() {
     prefix prfx;
     for (int i = 0; i < NPREF; i++)
       prfx.push_back(words.at(i));
-    int random = rand() % statetab.find(prfx)->second.size();
+    int random = rand_r() % statetab.find(prfx)->second.size();
     if (statetab.find(prfx)->second.at(random) == "<LP>") {
       break;
     }
