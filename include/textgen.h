@@ -6,12 +6,12 @@
 #include <vector>
 
 class Gen {
-private:
- typedef std::deque<std::string> prefix;
- std::map<prefix, vector<std::string> > statetab;
- int NPREF = 2;
- int MAXGEN = 1000;
 public:
+ std::vector<std::string> words;
+ typedef std::deque<std::string> prefix;
+ std::map<prefix, std::vector<std::string> > statetab;  // prefix-suffix
+ int NPREF;  // kol-vo slov s prefixe
+ int MAXGEN;  // max kol-vo texta
  Gen(std::string file);
  std::string generate();
 };
