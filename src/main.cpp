@@ -1,14 +1,7 @@
 // Copyright 2022 UNN-IASR
-#include <fstream>
-#include <iostream>
 #include "textgen.h"
 
 int main() {
-  Gen g("in.txt");
-  string output = g.generate();
-  ofstream fout;
-  fout.open("out.txt");
-  fout << output;
-  fout.close();
-  return 1;
+    MarkovGenerator gen = MarkovGenerator("test.txt", NPREF);
+    std::cout << gen.getText(MAXGEN) << std::endl;
 }
