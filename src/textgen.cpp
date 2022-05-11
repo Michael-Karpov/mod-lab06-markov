@@ -1,11 +1,11 @@
 // Copyright 2022 UNN-IASR
 #include <time.h>
-#include "textgen.h"
 #include <locale>
 #include <random>
 #include <ctime>
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include "textgen.h"
 #define rand_r rand
 
 Gen::Gen(string file) {
