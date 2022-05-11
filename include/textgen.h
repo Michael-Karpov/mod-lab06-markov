@@ -4,14 +4,14 @@
 #include <map>
 #include <string>
 #include <vector>
-using namespace std;
+
 class Gen {
  private:
- typedef deque<string> prefix;
- map<prefix, vector<string>> statetab;
+ typedef std::deque<std::string> prefix;
+ std::map<prefix, vector<std::string>> statetab;
  int NPREF = 2;
  int MAXGEN = 1000;
  public:
- Gen(string file);
- string generate();
+ Gen(std::string file);
+ std::string generate();
 };
