@@ -4,7 +4,6 @@
 #include <map>
 #include <string>
 #include <vector>
-
 class Gen {
  private:
  typedef std::deque<std::string> prefix;
